@@ -44,3 +44,6 @@ jobs:
           image-ref: ejercicio-docker-audit:${{ github.sha }}
           severity: 'HIGH,CRITICAL'
           exit-code: '1'
+
+      - name: Deploy
+        run: echo "Deploy step pending - EC2 not configured yet"
