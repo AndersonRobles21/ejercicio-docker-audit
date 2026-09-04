@@ -6,7 +6,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  Pytest:
+  pytest:
+    name: Pytest
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -25,7 +26,8 @@ jobs:
       - name: Run Pytest
         run: python -m pytest
 
-  Bandit Security Scan:
+  bandit-security-scan:
+    name: Bandit Security Scan
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -42,8 +44,9 @@ jobs:
       - name: Run Bandit
         run: bandit -r . --exclude ./.venv,./.git,./__pycache__,./.pytest_cache --severity-level medium
 
-  Docker Build:
-    needs: [Pytest, Bandit Security Scan]
+  docker-build:
+    name: Docker Build
+    needs: [pytest, bandit-security-scan]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -64,8 +67,9 @@ jobs:
           name: docker-image
           path: image.tar
 
-  Trivy Vulnerability Scan:
-    needs: Docker Build
+  trivy-vulnerability-scan:
+    name: Trivy Vulnerability Scan
+    needs: docker-build
     runs-on: ubuntu-latest
     steps:
       - name: Download image artifact
@@ -84,8 +88,9 @@ jobs:
           severity: 'HIGH,CRITICAL'
           exit-code: '1'
 
-  Publish to GHCR:
-    needs: Trivy Vulnerability Scan
+  publish-to-ghcr:
+    name: Publish to GHCR
+    needs: trivy-vulnerability-scan
     runs-on: ubuntu-latest
     permissions:
       contents: read
