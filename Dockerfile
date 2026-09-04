@@ -1,9 +1,18 @@
-FROM python:3.8
+FROM python:3.12-alpine
+
 WORKDIR /app
 
-COPY . /app
+RUN apk add --no-cache gcc musl-dev libffi-dev openssl-dev
 
-RUN pip install Flask==1.1.2 PyMySQL==0.9.3
+COPY requirements.txt .
+
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+
+RUN adduser -D appuser && chown -R appuser:appuser /app
+USER appuser
 
 EXPOSE 5050
+
 CMD ["python", "app.py"]

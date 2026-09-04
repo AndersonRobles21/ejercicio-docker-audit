@@ -1,0 +1,4 @@
+Flask==2.3.3
+PyMySQL==1.1.1
+cryptography==50.0.1
+pytest==7.4.3
