@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  test-and-deploy:
+  test-and-scan:
     runs-on: ubuntu-latest
 
     steps:
@@ -44,17 +44,3 @@ jobs:
           image-ref: ejercicio-docker-audit:${{ github.sha }}
           severity: 'HIGH,CRITICAL'
           exit-code: '1'
-
-      - name: Deploy to EC2
-        if: success()
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          port: ${{ secrets.EC2_SSH_PORT || 22 }}
-          script: |
-            set -e
-            cd ${{ secrets.EC2_PROJECT_PATH || '/opt/ejercicio-docker-audit' }}
-            git pull origin ${{ github.ref_name }}
-            docker compose up -d --build
